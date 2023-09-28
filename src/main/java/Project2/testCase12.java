@@ -70,8 +70,6 @@ public class testCase12 {
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cont2);
 		cont2.click();
 		obj.cartButton();
-//		WebElement table = driver.findElement(By.tagName("tbody"));
-//		List<WebElement> rows = table.findElements(By.tagName("tr"));
 		if (obj.tableSize() == 2) {
 			size = true;
 		}

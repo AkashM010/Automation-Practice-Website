@@ -45,7 +45,6 @@ public class testCase18 {
 		obj.getElement(By.xpath("//a[@href='#Men']")).click();
 		WebElement tshirt = obj.getElement(By.xpath("//a[contains(text(),'Tshirts')]"));
 		((JavascriptExecutor) driver).executeScript("arguments[0].click();", tshirt);
-//		tshirt.click();
 		String url2 = driver.getCurrentUrl();
 		String expectedUrl2 = "https://automationexercise.com/category_products/3";
 		softAssertion.assertEquals(url2, expectedUrl2);

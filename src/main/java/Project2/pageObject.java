@@ -569,14 +569,6 @@ public class pageObject {
 	public WebElement getProductQty(WebElement prodRow) {
 		return prodRow.findElement(By.cssSelector("td.cart_quantity button"));
 	}
-	
-	
-	
-	
-	
-	
-	
-	
 
 	public static void close() {
 		driver.quit();
