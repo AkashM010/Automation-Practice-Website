@@ -19,18 +19,19 @@ import org.testng.asserts.SoftAssert;
 public class testCase14 {
 	static WebDriver driver;
 	static SoftAssert softAssertion = new SoftAssert();
-	static boolean size = false;
+	static pageObject obj;
 
 	@BeforeTest
 	public static void setUp() {
-		data.setup();
-		driver = data.getDriver();
+		pageObject.setup();
+		driver = pageObject.getDriver();
+		obj = new pageObject(driver);
 		driver.manage().window().maximize();
 	}
 
 	@AfterTest
 	public static void teardown() {
-		data.close();
+		pageObject.close();
 	}
 
 	@Test(priority = 1)
@@ -39,11 +40,12 @@ public class testCase14 {
 		softAssertion.assertEquals(pageTitle, "Automation Exercise");
 	}
 	
-	@Test
+	@Test(priority = 2)
 	public static void addProduct() {
-		driver.findElement(By.xpath("//a[@href='/products']")).click();
-		List <WebElement> overlayElements = driver.findElements(By.cssSelector("div.productinfo.text-center"));
-		WebElement first = overlayElements.get(0);
+		WebElement product = obj.getElement(By.xpath("//a[@href='/products']"));
+		product.click();
+		List<WebElement> list = obj.producthover();
+		WebElement first = list.get(0);
 		Actions actions = new Actions(driver);
 		actions.moveToElement(first).perform();
 		WebElement addToCartBtn = first.findElement(By.cssSelector("a.btn.btn-default.add-to-cart"));
@@ -53,78 +55,80 @@ public class testCase14 {
 		WebElement cont = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[text()='Continue Shopping']")));
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cont);
 		cont.click();
-		driver.findElement(By.xpath("//a[contains(text(),' Cart')]")).click();
-		data.implicitSync();
-		driver.findElement(By.xpath("//a[text()='Proceed To Checkout']")).click();
+		obj.cartButton();
+		pageObject.implicitSync();
+		WebElement proceedToCheckout = obj.getElement(By.xpath("//a[text()='Proceed To Checkout']"));
+		proceedToCheckout.click();
 		WebElement login = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//u[text()='Register / Login']")));
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", login);
 		login.click();
 		driver.findElement(By.xpath("//input[@placeholder='Name']")).sendKeys("Random");
-		driver.findElement(By.xpath("//div[@class='col-sm-4']/div/form/input[3]")).sendKeys("random@123");
+		driver.findElement(By.xpath("//div[@class='col-sm-4']/div/form/input[3]")).sendKeys("r@2");
 		driver.findElement(By.xpath("//button[text()='Signup']")).click();
 	}
 	
-	@Test
+	@Test(priority = 3)
 	public static void acntCreate() {
-		driver.findElement(By.xpath("//input[@value='Mr']")).click();
-		driver.findElement(By.xpath("//input[@id='password']")).sendKeys("random@123");
-		WebElement day = driver.findElement(By.xpath("//select[@id='days']"));
+		pageObject.implicitSync();
+		obj.radioBtn();
+		obj.password("Random@123");
+		WebElement day = obj.dayDropDown();
 		Select dayDD = new Select(day);
 		dayDD.selectByIndex(1);
-		WebElement month = driver.findElement(By.xpath("//select[@id='months']"));
+		WebElement month = obj.monthDropDown();
 		Select monthDD = new Select(month);
 		monthDD.selectByIndex(1);
-		WebElement year = driver.findElement(By.xpath("//select[@id='years']"));
+		WebElement year = obj.yearDropDown();
 		Select yearDD = new Select(year);
 		yearDD.selectByIndex(1);
-		driver.findElement(By.id("newsletter")).click();
-		driver.findElement(By.id("optin")).click();
-		driver.findElement(By.id("first_name")).sendKeys("Random");
-		driver.findElement(By.id("last_name")).sendKeys("Name");
-		driver.findElement(By.id("company")).sendKeys("Abc");
-		driver.findElement(By.id("address1")).sendKeys("abc cvcb");
-		driver.findElement(By.id("address2")).sendKeys("adsf vgh");
-		WebElement country = driver.findElement(By.xpath("//select[@id='country']"));
+		obj.firstName("Random");
+		obj.lastName("Name");
+		obj.Company("Abc");
+		obj.Adress1("abc cvcb");
+		obj.Adress2("adsf vgh");
+		WebElement country = obj.countryDropDown();
 		Select countryDD = new Select(country);
 		countryDD.selectByValue("India");
-		driver.findElement(By.id("state")).sendKeys("West Bengal");
-		driver.findElement(By.id("city")).sendKeys("Kolkata");
-		driver.findElement(By.id("zipcode")).sendKeys("123456");
-		driver.findElement(By.id("mobile_number")).sendKeys("7894561230");
-		driver.findElement(By.xpath("//button[text()='Create Account']")).click();
-		WebElement acntelement = driver.findElement(By.xpath("//*[text()='Account Created!']"));
-		softAssertion.assertEquals(acntelement.isDisplayed(), true);
-		driver.findElement(By.xpath("//*[text()='Continue']")).click();
-		testCase01.loggedInAsUsername();
+		obj.State("West Bengal");
+		obj.City("Kolkata");
+		obj.Zipcode("123456");
+		obj.MobileNumber("7894561230");
+		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", obj.creatAcntBtn);
+		obj.creatAccount();
+		pageObject.implicitSync();
+		String value = obj.usernameVisibility();
+		softAssertion.assertEquals(value, "Random");
 	}
 	
-	@Test
+	@Test(priority = 4)
 	public static void prodPurchase() {
-		driver.findElement(By.xpath("//a[contains(text(),' Cart')]")).click();
-		data.implicitSync();
-		driver.findElement(By.xpath("//a[text()='Proceed To Checkout']")).click();
-		driver.findElement(By.id("address_delivery")).isDisplayed();
-		driver.findElement(By.xpath("//h2[text()='Review Your Order']")).isDisplayed();
-		driver.findElement(By.xpath("//textarea[@name='message']")).sendKeys("First Purchase");
-		driver.findElement(By.xpath("//a[contains(text(),'Place Order')]")).click();
+		obj.cartButton();
+		pageObject.implicitSync();
+		WebElement proceedToCheckout = obj.getElement(By.xpath("//a[text()='Proceed To Checkout']"));
+		proceedToCheckout.click();
+		obj.getElement(By.id("address_delivery")).isDisplayed();
+		obj.getElement(By.xpath("//h2[text()='Review Your Order']")).isDisplayed();
+		obj.getElement(By.xpath("//textarea[@name='message']")).sendKeys("First Purchase");
+		obj.getElement(By.xpath("//a[contains(text(),'Place Order')]")).click();
 	}
 	
-	@Test
+	@Test(priority = 5)
 	public static void payment() {
-		driver.findElement(By.xpath("//*[@class='form-control']")).sendKeys("Random Name");
-		driver.findElement(By.xpath("//*[@class='form-control card-number']")).sendKeys("78943215852");
-		driver.findElement(By.xpath("//*[@name='cvc']")).sendKeys("258");
-		driver.findElement(By.name("expiry_month")).sendKeys("12");
-		driver.findElement(By.name("expiry_year")).sendKeys("1995");
-		driver.findElement(By.id("submit")).click();
-		driver.findElement(By.xpath("//*[text()='Order Placed!']")).isDisplayed();
+		pageObject.implicitSync();
+		obj.findElement("xpath", "//*[@class='form-control']").sendKeys("Random Name");
+		obj.findElement("xpath", "//*[@class='form-control card-number']").sendKeys("78943215852");
+		obj.findElement("xpath", "//*[@name='cvc']").sendKeys("258");
+		obj.findElement("name", "expiry_month").sendKeys("12");
+		obj.findElement("name", "expiry_year").sendKeys("1995");
+		obj.findElement("id", "submit").click();
+		obj.findElement("xpath", "//*[text()='Order Placed!']").isDisplayed();
 	}
 	
-	@Test
+	@Test(priority = 6)
 	public static void deleteSignedUpAccount() {
-		driver.findElement(By.xpath("//a[@href='/delete_account']")).click();
-		WebElement deletedAcnt1 = driver.findElement(By.xpath("//*[text()='Account Deleted!']"));
+		obj.delete();
+		WebElement deletedAcnt1 = obj.findElement("xpath", "//*[text()='Account Deleted!']");
 		softAssertion.assertEquals(deletedAcnt1.isDisplayed(), true);
-		driver.findElement(By.xpath("//*[text()='Continue']")).click();
+		obj.continueButton();
 	}
 }

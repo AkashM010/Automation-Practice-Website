@@ -10,16 +10,18 @@ import org.testng.asserts.SoftAssert;
 public class testCase07 {
 	static WebDriver driver;
 	static SoftAssert softAssertion = new SoftAssert();
-	
+	static pageObject obj;
+
 	@BeforeTest
 	public static void setUp() {
-		data.setup();
-		driver = data.getDriver();
+		pageObject.setup();
+		driver = pageObject.getDriver();
+		obj = new pageObject(driver);
 	}
-	
+
 	@AfterTest
 	public static void teardown() {
-		data.close();
+		pageObject.close();
 	}
 	
 	@Test (priority = 1)
@@ -30,7 +32,7 @@ public class testCase07 {
 	
 	@Test
 	public static void testCasses() {
-		driver.findElement(By.xpath("//button[contains(text(),'Test Cases')]")).click();
+		obj.testCases();;
 		String currentUrl = driver.getCurrentUrl();
 		softAssertion.assertEquals(currentUrl, "https://automationexercise.com/test_cases");
 	}

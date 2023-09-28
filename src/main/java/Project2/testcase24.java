@@ -24,13 +24,13 @@ public class testcase24 {
 
 	@BeforeTest
 	public static void setUp() {
-		data.setup();
-		driver = data.getDriver();
+		pageObject.setup();
+		driver = pageObject.getDriver();
 	}
 
 	@AfterTest
 	public static void teardown() {
-		data.close();
+		pageObject.close();
 	}
 
 	@Test(priority = 1)
@@ -54,12 +54,12 @@ public class testcase24 {
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cont);
 		cont.click();
 		driver.findElement(By.xpath("//a[contains(text(),' Cart')]")).click();
-		data.implicitSync();
+		pageObject.implicitSync();
 		String url = driver.getCurrentUrl();
 		String expectedUrl = "https://automationexercise.com/view_cart";
 		softAssertion.assertEquals(url, expectedUrl);
 		driver.findElement(By.xpath("//a[text()='Proceed To Checkout']")).click();
-		data.implicitSync();
+		pageObject.implicitSync();
 		WebElement login = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//u[text()='Register / Login']")));
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", login);
 		login.click();
@@ -70,7 +70,7 @@ public class testcase24 {
 	
 	@Test (priority = 3)
 	public static void acntCreate() {
-		data.implicitSync();
+		pageObject.implicitSync();
 		driver.findElement(By.xpath("//input[@value='Mr']")).click();
 		driver.findElement(By.xpath("//input[@id='password']")).sendKeys("random@123");
 		WebElement day = driver.findElement(By.xpath("//select[@id='days']"));
@@ -104,7 +104,7 @@ public class testcase24 {
 	@Test (priority = 4)
 	public static void prodPurchase() {
 		driver.findElement(By.xpath("//a[contains(text(),' Cart')]")).click();
-		data.implicitSync();
+		pageObject.implicitSync();
 		driver.findElement(By.xpath("//a[text()='Proceed To Checkout']")).click();
 		driver.findElement(By.id("address_delivery")).isDisplayed();
 		driver.findElement(By.xpath("//h2[text()='Review Your Order']")).isDisplayed();

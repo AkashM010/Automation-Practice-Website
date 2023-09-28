@@ -12,46 +12,58 @@ import org.testng.asserts.SoftAssert;
 public class testCase08 {
 	static WebDriver driver;
 	static SoftAssert softAssertion = new SoftAssert();
-	
+	static pageObject obj;
+
 	@BeforeTest
 	public static void setUp() {
-		data.setup();
-		driver = data.getDriver();
+		pageObject.setup();
+		driver = pageObject.getDriver();
+		obj = new pageObject(driver);
 	}
-	
+
 	@AfterTest
 	public static void teardown() {
-		data.close();
+		pageObject.close();
 	}
-	
-	@Test (priority = 1)
+
+	@Test(priority = 1)
 	public static void homePage() {
 		String pageTitle = driver.getTitle();
 		softAssertion.assertEquals(pageTitle, "Automation Exercise");
 	}
-	
+
 	@Test
 	public static void products() {
-		driver.findElement(By.xpath("//a[@href='/products']")).click();
-		boolean allProdDisplayed = driver.findElement(By.xpath("//h2[text()='All Products']")).isDisplayed();
+		obj.productsButton();
+		pageObject.implicitSync();
+		WebElement allProduct = obj.allaproductsDisplay();
+		boolean allProdDisplayed = allProduct.isDisplayed();
 		softAssertion.assertEquals(allProdDisplayed, true);
-		boolean prodListDisplayed = driver.findElement(By.className("features_items")).isDisplayed();
+
+		WebElement allProdList = obj.prodListDisplay();
+		boolean prodListDisplayed = allProdList.isDisplayed();
 		softAssertion.assertEquals(prodListDisplayed, true);
-		WebElement viewProductLink = driver.findElement(By.xpath("//a[contains(@href,'/product_details/1') and contains(@style,'color: brown;')]"));
+		WebElement viewProductLink = obj.viewProduct();
 		((JavascriptExecutor) driver).executeScript("arguments[0].click();", viewProductLink);
 		String currentUrl = driver.getCurrentUrl();
 		softAssertion.assertEquals(currentUrl, "https://automationexercise.com/product_details/1");
-		boolean prodName = driver.findElement(By.xpath("//h2[contains(text(),'Blue Top')]")).isDisplayed();
+		WebElement firstProduct = obj.prodDetail();
+		boolean prodName = firstProduct.isDisplayed();
 		softAssertion.assertEquals(prodName, true);
-		boolean prodCategory = driver.findElement(By.xpath("//p[contains(text(),'Category: Women > Tops')]")).isDisplayed();
-		softAssertion.assertEquals(prodCategory, true);
-		boolean prodPrice = driver.findElement(By.xpath("//span[contains(text(),'Rs. 500')]")).isDisplayed();
-		softAssertion.assertEquals(prodPrice, true);
-		boolean prodAvailability = driver.findElement(By.xpath("//b[contains(text(),'Availability:')]")).isDisplayed();
-		softAssertion.assertEquals(prodAvailability, true);
-		boolean prodCondition = driver.findElement(By.xpath("//b[contains(text(),'Condition:')]")).isDisplayed();
-		softAssertion.assertEquals(prodCondition, true);
-		boolean prodBrand = driver.findElement(By.xpath("//p[contains(text(),'Polo')]")).isDisplayed();
-		softAssertion.assertEquals(prodBrand, true);
+		WebElement productCategory = obj.ProductCategory();
+		boolean prodcategory = productCategory.isDisplayed();
+		softAssertion.assertEquals(prodcategory, true);
+		WebElement productPrice = obj.ProductPrice();
+		boolean prodprice = productPrice.isDisplayed();
+		softAssertion.assertEquals(prodprice, true);
+		WebElement productAvail = obj.ProductAvailability();
+		boolean prodavailability = productAvail.isDisplayed();
+		softAssertion.assertEquals(prodavailability, true);
+		WebElement productCondition = obj.ProductCondition();
+		boolean prodcondition = productCondition.isDisplayed();
+		softAssertion.assertEquals(prodcondition, true);
+		WebElement productBrand = obj.ProductBrand();
+		boolean prodbrand = productBrand.isDisplayed();
+		softAssertion.assertEquals(prodbrand, true);
 	}
 }

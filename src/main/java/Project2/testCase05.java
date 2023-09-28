@@ -15,38 +15,40 @@ import org.testng.asserts.SoftAssert;
 public class testCase05 {
 	static WebDriver driver;
 	static SoftAssert softAssertion = new SoftAssert();
-	
+	static pageObject obj;
+
 	@BeforeTest
 	public static void setUp() {
-		data.setup();
-		driver = data.getDriver();
+		pageObject.setup();
+		driver = pageObject.getDriver();
+		obj = new pageObject(driver);
 	}
-	
+
 	@AfterTest
 	public static void teardown() {
-		data.close();
+		pageObject.close();
 	}
-	
-	@Test (priority = 1)
+
+	@Test(priority = 1)
 	public static void homePage() {
 		String pageTitle = driver.getTitle();
 		softAssertion.assertEquals(pageTitle, "Automation Exercise");
 	}
-	
-	@Test (priority = 2)
+
+	@Test(priority = 2)
 	public static void signupBtn() {
-		driver.findElement(By.xpath("//a[@href='/login']")).click();
-		WebElement element = driver.findElement(By.xpath("//h2[text()='New User Signup!']"));
+		obj.signLogButton();
+		WebElement element = obj.newUser();
 		boolean dispalyed = element.isDisplayed();
 		softAssertion.assertEquals(dispalyed, true);
 	}
-	
-	@Test (priority = 3)
+
+	@Test(priority = 3)
 	public static void signUpPage() {
-		driver.findElement(By.xpath("//input[@data-qa='signup-name']")).sendKeys("Kapil Kunale");
-		driver.findElement(By.xpath("//div[@class='col-sm-4']/div/form/input[3]")).sendKeys("arjenrodriguez10@gmail.com");
-		driver.findElement(By.xpath("//button[text()='Signup']")).click();
-		WebElement errorMsg2 = driver.findElement(By.xpath("//*[contains(text(),'Email Address already exist!')]"));
+		obj.Name("Random");
+		obj.emailID("Random@123");;
+		obj.signUpbutton();
+		WebElement errorMsg2 = obj.signUpErrorMessage();
 		softAssertion.assertEquals(errorMsg2.getText(), "Email Address already exist!");
 	}
 }

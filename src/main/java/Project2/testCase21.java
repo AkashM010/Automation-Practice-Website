@@ -15,13 +15,13 @@ public class testCase21 {
 	
 	@BeforeTest
 	public static void setUp() {
-		data.setup();
-		driver = data.getDriver();
+		pageObject.setup();
+		driver = pageObject.getDriver();
 	}
 	
 	@AfterTest
 	public static void teardown() {
-		data.close();
+		pageObject.close();
 	}
 	
 	@Test

@@ -12,16 +12,18 @@ import org.testng.asserts.SoftAssert;
 public class testCase11 {
 	static WebDriver driver;
 	static SoftAssert softAssertion = new SoftAssert();
+	static pageObject obj;
 
 	@BeforeTest
 	public static void setUp() {
-		data.setup();
-		driver = data.getDriver();
+		pageObject.setup();
+		driver = pageObject.getDriver();
+		obj = new pageObject(driver);
 	}
 
 	@AfterTest
 	public static void teardown() {
-		data.close();
+		pageObject.close();
 	}
 
 	@Test(priority = 1)
@@ -32,15 +34,14 @@ public class testCase11 {
 
 	@Test
 	public static void footer() {
-		driver.findElement(By.linkText("Cart")).click();
+		obj.cartButton();
 		JavascriptExecutor js = (JavascriptExecutor) driver;
-		WebElement footerElement = driver.findElement(By.tagName("footer"));
-		js.executeScript("arguments[0].scrollIntoView(true);", footerElement);
-		boolean subscriptionIsDisplayed = driver.findElement(By.xpath("//h2[text()='Subscription']")).isDisplayed();
+		js.executeScript("arguments[0].scrollIntoView(true);", obj.footer());
+		boolean subscriptionIsDisplayed = obj.subscription().isDisplayed();
 		softAssertion.assertEquals(subscriptionIsDisplayed, true);
-		driver.findElement(By.id("susbscribe_email")).sendKeys("abc@gmail.com");
-		driver.findElement(By.xpath("//button[@id='subscribe']")).click();
-		boolean msgDisplayed = driver.findElement(By.xpath("//div[text()='You have been successfully subscribed!']")).isDisplayed();
+		obj.subscriptionEmail("abc@gmail.com");
+		obj.subscribeButton();
+		boolean msgDisplayed = obj.subscriptionSuccessMessage().isDisplayed();
 		softAssertion.assertEquals(msgDisplayed, true);
 	}
 }

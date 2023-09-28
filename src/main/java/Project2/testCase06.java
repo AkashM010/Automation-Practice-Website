@@ -5,6 +5,7 @@ import java.time.Duration;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -18,55 +19,50 @@ import org.testng.asserts.SoftAssert;
 public class testCase06 {
 	static WebDriver driver;
 	static SoftAssert softAssertion = new SoftAssert();
-	
+	static pageObject obj;
+
 	@BeforeTest
 	public static void setUp() {
-		data.setup();
-		driver = data.getDriver();
+		pageObject.setup();
+		driver = pageObject.getDriver();
+		obj = new pageObject(driver);
 	}
-	
+
 	@AfterTest
 	public static void teardown() {
-		data.close();
+		pageObject.close();
 	}
-	
-	@Test (priority = 1)
+
+	@Test(priority = 1)
 	public static void homePage() {
 		String pageTitle = driver.getTitle();
 		softAssertion.assertEquals(pageTitle, "Automation Exercise");
 	}
-	
-	@Test (priority = 2)
+
+	@Test(priority = 2)
 	public static void contactUs() {
-		driver.findElement(By.xpath("//a[contains(text(),' Contact us')]")).click();
+		obj.contactUs();
 	}
-	
-	@Test (priority = 3)
+
+	@Test(priority = 3)
 	public static void getInTouch() throws Exception {
-		boolean isDisplayed = driver.findElement(By.xpath("//*[contains(text(),'Get In Touch')]")).isDisplayed();
+		WebElement contactustext = obj.contactUsText();
+		boolean isDisplayed = contactustext.isDisplayed();
 		softAssertion.assertEquals(isDisplayed, true);
-		driver.findElement(By.name("name")).sendKeys("Kapil Kunale");
-		driver.findElement(By.name("email")).sendKeys("arjenrodriguez10@gmail.com");
-		driver.findElement(By.name("subject")).sendKeys("Testing");
-		driver.findElement(By.name("message")).sendKeys("Just testing this field");
-		WebElement fileUploadElement = driver.findElement(By.name("upload_file"));
+		obj.contactUsName("Kapil Kunale");
+		obj.contactUsEmail("arjenrodriguez10@gmail.com");
+		obj.contactUsSubject("Testing");
+		obj.contactUsMessage("Just testing this field");
 		String filePath = "C:\\Users\\Akash\\OneDrive\\Desktop\\locators.txt";
-		fileUploadElement.sendKeys(filePath);
-		WebElement iframe = driver.findElement(By.id("aswift_1"));
-		driver.switchTo().frame(iframe);
-//		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-//		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name='submit']")));
-		WebElement submitBtn = driver.findElement(By.xpath("//input[@name='submit']"));
+		obj.fileUpload(filePath);
+		WebElement submitBtn = obj.submitButton();
+		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", submitBtn);
 		submitBtn.click();
-		driver.switchTo().defaultContent();
-//		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-//		Alert alert = wait.until(ExpectedConditions.alertIsPresent());
 		Alert alert = driver.switchTo().alert();
-		System.out.println(alert.getText());
 		alert.accept();
-		WebElement msg = driver.findElement(By.xpath("//div[@class='status alert alert-success']"));
+		WebElement msg = obj.successMessage();
 		softAssertion.assertEquals(msg.getText(), "Success! Your details have been submitted successfully.");
-		driver.findElement(By.xpath("//span[contains(text(),'Home')]")).click();
+		obj.homeButton();
 		homePage();
 	}
 }

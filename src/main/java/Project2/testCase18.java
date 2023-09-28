@@ -12,36 +12,38 @@ import org.testng.asserts.SoftAssert;
 public class testCase18 {
 	static WebDriver driver;
 	static SoftAssert softAssertion = new SoftAssert();
+	static pageObject obj;
 
 	@BeforeTest
 	public static void setUp() {
-		data.setup();
-		driver = data.getDriver();
+		pageObject.setup();
+		driver = pageObject.getDriver();
+		obj = new pageObject(driver);
 		driver.manage().window().maximize();
 	}
 
 	@AfterTest
 	public static void teardown() {
-		data.close();
+		pageObject.close();
 	}
 
 	@Test
 	public static void leftSidebar() throws Exception  {
-		boolean catDisplayed = driver.findElement(By.xpath("//h2[text()='Category']")).isDisplayed();
+		boolean catDisplayed = obj.getElement(By.xpath("//h2[text()='Category']")).isDisplayed();
 		softAssertion.assertEquals(catDisplayed, true);
 		Thread.sleep(2000);
-		driver.findElement(By.xpath("//a[@href='#Women']")).click();
+		obj.getElement(By.xpath("//a[@href='#Women']")).click();
 		Thread.sleep(2000);
-		data.explicitSync(By.xpath("//a[contains(@href,'/category_products/1')]"));
-		driver.findElement(By.xpath("//a[contains(@href,'/category_products/1')]")).click();
+		pageObject.explicitSync(By.xpath("//a[contains(@href,'/category_products/1')]"));
+		obj.getElement(By.xpath("//a[contains(@href,'/category_products/1')]")).click();
 		Thread.sleep(2000);
 		String url = driver.getCurrentUrl();
 		String expectedUrl = "https://automationexercise.com/category_products/1";
 		softAssertion.assertEquals(url, expectedUrl);
-		boolean carDisplayed2 = driver.findElement(By.xpath("//h2[text()='Women - Dress Products']")).isDisplayed();
+		boolean carDisplayed2 = obj.getElement(By.xpath("//h2[text()='Women - Dress Products']")).isDisplayed();
 		softAssertion.assertEquals(carDisplayed2, true);
-		driver.findElement(By.xpath("//a[@href='#Men']")).click();
-		WebElement tshirt = driver.findElement(By.xpath("//a[contains(text(),'Tshirts')]"));
+		obj.getElement(By.xpath("//a[@href='#Men']")).click();
+		WebElement tshirt = obj.getElement(By.xpath("//a[contains(text(),'Tshirts')]"));
 		((JavascriptExecutor) driver).executeScript("arguments[0].click();", tshirt);
 //		tshirt.click();
 		String url2 = driver.getCurrentUrl();

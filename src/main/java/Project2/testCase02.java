@@ -11,16 +11,18 @@ import org.testng.asserts.SoftAssert;
 public class testCase02 {
 	static WebDriver driver;
 	static SoftAssert softAssertion = new SoftAssert();
+	static pageObject obj;
 	
 	@BeforeTest
 	public static void setUp() {
-		data.setup();
-		driver = data.getDriver();
+		pageObject.setup();
+		driver = pageObject.getDriver();
+		obj = new pageObject(driver);
 	}
 	
 	@AfterTest
 	public static void teardown() {
-		data.close();
+		pageObject.close();
 	}
 	
 	@Test (priority = 1)
@@ -31,22 +33,22 @@ public class testCase02 {
 	
 	@Test (priority = 2)
 	public static void loginToAccount() {
-		driver.findElement(By.xpath("//a[@href='/login']")).click();
-		WebElement element = driver.findElement(By.xpath("//h2[text()='Login to your account']"));
+		obj.signLogButton();
+		WebElement element = obj.loginTextDisplayed();
 		boolean dispalyed = element.isDisplayed();
 		softAssertion.assertEquals(dispalyed, true);
-		driver.findElement(By.xpath("//input[@data-qa='login-email']")).sendKeys("arjenrodriguez10@gmail.com");
-		driver.findElement(By.name("password")).sendKeys("Qwerty@123");
-		driver.findElement(By.xpath("//button[text()='Login']")).click();
-		WebElement linkElement	= driver.findElement(By.xpath("//a[contains(text(),' Logged in as ')]"));
+		obj.loginEmailID("arjenrodriguez10@gmail.com");
+		obj.password("Qwerty@123");
+		obj.logInbutton();
+		WebElement linkElement	= obj.usernameVisible;
 		String textInElement = linkElement.getText();
 		softAssertion.assertEquals(textInElement, "Logged in as Kapil Kunale");
 	}
 	
 	@Test (priority = 3)
 	public static void deleteLoggedInAccount() {
-		driver.findElement(By.xpath("//a[contains(text(),' Delete Account')]")).click();
-		WebElement deletedAcnt2 = driver.findElement(By.xpath("//*[text()='Account Deleted!']"));
+		obj.delete();
+		WebElement deletedAcnt2 = obj.deleteMessage();
 		softAssertion.assertEquals(deletedAcnt2.isDisplayed(), true);
 	}
 }

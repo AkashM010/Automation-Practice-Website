@@ -15,14 +15,14 @@ public class testcase25 {
 
 	@BeforeTest
 	public static void setUp() {
-		data.setup();
-		driver = data.getDriver();
+		pageObject.setup();
+		driver = pageObject.getDriver();
 		driver.manage().window().maximize();
 	}
 
 	@AfterTest
 	public static void teardown() {
-		data.close();
+		pageObject.close();
 	}
 
 	@Test(priority = 1)

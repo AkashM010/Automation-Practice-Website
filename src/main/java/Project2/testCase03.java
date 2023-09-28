@@ -11,34 +11,36 @@ import org.testng.asserts.SoftAssert;
 public class testCase03 {
 	static WebDriver driver;
 	static SoftAssert softAssertion = new SoftAssert();
-	
+	static pageObject obj;
+
 	@BeforeTest
 	public static void setUp() {
-		data.setup();
-		driver = data.getDriver();
+		pageObject.setup();
+		driver = pageObject.getDriver();
+		obj = new pageObject(driver);
 	}
-	
+
 	@AfterTest
 	public static void teardown() {
-		data.close();
+		pageObject.close();
 	}
-	
-	@Test (priority = 1)
+
+	@Test(priority = 1)
 	public static void homePage() {
 		String pageTitle = driver.getTitle();
 		softAssertion.assertEquals(pageTitle, "Automation Exercise");
 	}
-	
-	@Test (priority = 2)
+
+	@Test(priority = 2)
 	public static void loginToAccount() {
-		driver.findElement(By.xpath("//a[@href='/login']")).click();
-		WebElement element = driver.findElement(By.xpath("//h2[text()='Login to your account']"));
+		obj.signLogButton();
+		WebElement element = obj.loginTextDisplayed();
 		boolean dispalyed = element.isDisplayed();
 		softAssertion.assertEquals(dispalyed, true);
-		driver.findElement(By.xpath("//input[@data-qa='login-email']")).sendKeys("abc@gmail.com");
-		driver.findElement(By.name("password")).sendKeys("abc@123");
-		driver.findElement(By.xpath("//button[text()='Login']")).click();
-		WebElement errorMsg1	= driver.findElement(By.xpath("//p[contains(text(),'Your email or password is incorrect!')]"));
+		obj.loginEmailID("abc@gmail.com");
+		obj.password("abc@123");
+		obj.logInbutton();
+		WebElement errorMsg1 = obj.errorMessage();
 		softAssertion.assertEquals(errorMsg1.getText(), "Your email or password is incorrect!");
 	}
 }

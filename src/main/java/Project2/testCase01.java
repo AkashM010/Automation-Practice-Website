@@ -1,6 +1,5 @@
 package Project2;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
@@ -13,16 +12,18 @@ public class testCase01 {
 	
 	static WebDriver driver;
 	static SoftAssert softAssertion = new SoftAssert();
+	static pageObject obj;
 	
 	@BeforeTest
 	public static void setUp() {
-		data.setup();
-		driver = data.getDriver();
+		pageObject.setup();
+		driver = pageObject.getDriver();
+		obj = new pageObject(driver);
 	}
 	
 	@AfterTest
 	public static void teardown() {
-		data.close();
+		pageObject.close();
 	}
 	
 	@Test (priority=1)
@@ -33,72 +34,71 @@ public class testCase01 {
 	
 	@Test (priority=2)
 	public static void signupBtn() {
-		driver.findElement(By.xpath("//a[@href='/login']")).click();
-		WebElement element = driver.findElement(By.xpath("//h2[text()='New User Signup!']"));
+		obj.signLogButton();
+		WebElement element = obj.newUser();
 		boolean dispalyed = element.isDisplayed();
 		softAssertion.assertEquals(dispalyed, true);
 	}
 	
 	@Test (priority=3)
 	public static void signUpPage() {
-//		data.explicitSync(By.xpath("//input[@placeholder='Name']"));
-		driver.findElement(By.xpath("//input[@placeholder='Name']")).sendKeys("Random");
-		driver.findElement(By.xpath("//div[@class='col-sm-4']/div/form/input[3]")).sendKeys("random@123");
-		driver.findElement(By.xpath("//button[text()='Signup']")).click();
-		WebElement acntInfo =	driver.findElement(By.xpath("//b[text()='Enter Account Information']"));
+		obj.Name("Random");
+		obj.emailID("Random@123");;
+		obj.signUpbutton();
+		WebElement acntInfo = obj.acntInfo();
 		boolean actualAcntInfo = acntInfo.isDisplayed();
 		softAssertion.assertEquals(actualAcntInfo, true);
 	}
 	
 	@Test (priority=4)
 	public static void accountntInfo() {
-		driver.findElement(By.xpath("//input[@value='Mr']")).click();
-		driver.findElement(By.xpath("//input[@id='password']")).sendKeys("random@123");
-		WebElement day = driver.findElement(By.xpath("//select[@id='days']"));
+		obj.radioBtn();
+		obj.password("Random@123");
+		WebElement day = obj.dayDropDown();
 		Select dayDD = new Select(day);
 		dayDD.selectByIndex(1);
-		WebElement month = driver.findElement(By.xpath("//select[@id='months']"));
+		WebElement month = obj.monthDropDown();
 		Select monthDD = new Select(month);
 		monthDD.selectByIndex(1);
-		WebElement year = driver.findElement(By.xpath("//select[@id='years']"));
+		WebElement year = obj.yearDropDown();
 		Select yearDD = new Select(year);
 		yearDD.selectByIndex(1);
-		driver.findElement(By.id("newsletter")).click();
-		driver.findElement(By.id("optin")).click();
-		driver.findElement(By.id("first_name")).sendKeys("Random");
-		driver.findElement(By.id("last_name")).sendKeys("Name");
-		driver.findElement(By.id("company")).sendKeys("Abc");
-		driver.findElement(By.id("address1")).sendKeys("abc cvcb");
-		driver.findElement(By.id("address2")).sendKeys("adsf vgh");
-		WebElement country = driver.findElement(By.xpath("//select[@id='country']"));
+		obj.newsletter();
+		obj.optin();
+		obj.firstName("Random");
+		obj.lastName("Name");
+		obj.Company("Abc");
+		obj.Adress1("abc cvcb");
+		obj.Adress2("adsf vgh");
+		WebElement country = obj.countryDropDown();
 		Select countryDD = new Select(country);
 		countryDD.selectByValue("India");
-		driver.findElement(By.id("state")).sendKeys("West Bengal");
-		driver.findElement(By.id("city")).sendKeys("Kolkata");
-		driver.findElement(By.id("zipcode")).sendKeys("123456");
-		driver.findElement(By.id("mobile_number")).sendKeys("7894561230");
-		driver.findElement(By.xpath("//button[text()='Create Account']")).click();
+		obj.State("West Bengal");
+		obj.City("Kolkata");
+		obj.Zipcode("123456");
+		obj.MobileNumber("7894561230");
+		obj.creatAccount();
 	}
 	
 	@Test (priority=5)
 	public static void afterAccountCreation() {
-		WebElement acntelement = driver.findElement(By.xpath("//*[text()='Account Created!']"));
+		WebElement acntelement = obj.accountCreatedText();
 		softAssertion.assertEquals(acntelement.isDisplayed(), true);
-		driver.findElement(By.xpath("//*[text()='Continue']")).click();
+		obj.continueButton();
 	}
 	
 	@Test (priority=6)
 	public static void loggedInAsUsername() {
 //		driver.findElement(By.xpath("//li/a[contains(text(), 'Logged in as')]"));
-		String value = driver.findElement(By.xpath("//li/a/b")).getText();
+		String value = obj.usernameVisibility();
 		softAssertion.assertEquals(value, "Random"); 	//checks username value
 	}
 	
 	@Test (priority=7)
 	public static void deleteSignedUpAccount() {
-		driver.findElement(By.xpath("//a[@href='/delete_account']")).click();
-		WebElement deletedAcnt1 = driver.findElement(By.xpath("//*[text()='Account Deleted!']"));
+		obj.delete();
+		WebElement deletedAcnt1 = obj.deleteMessage();
 		softAssertion.assertEquals(deletedAcnt1.isDisplayed(), true);
-		driver.findElement(By.xpath("//*[text()='Continue']")).click();
+		obj.continueButton();
 	}
 }

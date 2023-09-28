@@ -18,18 +18,19 @@ import org.testng.asserts.SoftAssert;
 public class testCase17 {
 	static WebDriver driver;
 	static SoftAssert softAssertion = new SoftAssert();
-	static boolean size = false;
+	static pageObject obj;
 
 	@BeforeTest
 	public static void setUp() {
-		data.setup();
-		driver = data.getDriver();
+		pageObject.setup();
+		driver = pageObject.getDriver();
+		obj = new pageObject(driver);
 		driver.manage().window().maximize();
 	}
 
 	@AfterTest
 	public static void teardown() {
-		data.close();
+		pageObject.close();
 	}
 
 	@Test(priority = 1)
@@ -40,9 +41,10 @@ public class testCase17 {
 
 	@Test
 	public static void deletionOfprod() {
-		driver.findElement(By.xpath("//a[@href='/products']")).click();
-		List<WebElement> overlayElements = driver.findElements(By.cssSelector("div.productinfo.text-center"));
-		WebElement first = overlayElements.get(0);
+		WebElement product = obj.getElement(By.xpath("//a[@href='/products']"));
+		product.click();
+		List<WebElement> list = obj.producthover();
+		WebElement first = list.get(0);
 		Actions actions = new Actions(driver);
 		actions.moveToElement(first).perform();
 		WebElement addToCartBtn = first.findElement(By.cssSelector("a.btn.btn-default.add-to-cart"));
@@ -53,12 +55,12 @@ public class testCase17 {
 				.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[text()='Continue Shopping']")));
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cont);
 		cont.click();
-		driver.findElement(By.xpath("//a[contains(text(),' Cart')]")).click();
-		data.implicitSync();
+		obj.cartButton();
+		pageObject.implicitSync();
 		String url = driver.getCurrentUrl();
 		softAssertion.assertEquals(url, "https://automationexercise.com/view_cart");
-		driver.findElement(By.cssSelector("a.cart_quantity_delete")).click();
-		boolean displayed = driver.findElement(By.xpath("//b[contains(text(),'Cart is empty!')]")).isDisplayed();
+		obj.getElement(By.cssSelector("a.cart_quantity_delete")).click();
+		boolean displayed = obj.getElement(By.xpath("//b[contains(text(),'Cart is empty!')]")).isDisplayed();
 		softAssertion.assertEquals(displayed, true);
 	}
 }

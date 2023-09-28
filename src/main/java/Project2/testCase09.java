@@ -15,16 +15,19 @@ public class testCase09 {
 	static WebDriver driver;
 	static SoftAssert softAssertion = new SoftAssert();
 	static String searchQuery = "shirt";
+	static pageObject obj;
 
 	@BeforeTest
 	public static void setUp() {
-		data.setup();
-		driver = data.getDriver();
+		pageObject.setup();
+		driver = pageObject.getDriver();
+		obj = new pageObject(driver);
+		driver.manage().window().maximize();
 	}
 
 	@AfterTest
 	public static void teardown() {
-		data.close();
+		pageObject.close();
 	}
 
 	@Test(priority = 1)
@@ -35,15 +38,17 @@ public class testCase09 {
 
 	@Test
 	public static void products() {
-		driver.findElement(By.xpath("//a[@href='/products']")).click();
-		boolean allProdDisplayed = driver.findElement(By.xpath("//h2[text()='All Products']")).isDisplayed();
+		obj.productsButton();
+		pageObject.implicitSync();
+		WebElement allProduct = obj.allaproductsDisplay();
+		boolean allProdDisplayed = allProduct.isDisplayed();
 		softAssertion.assertEquals(allProdDisplayed, true);
-		driver.findElement(By.name("search")).sendKeys("shirt");
-		driver.findElement(By.xpath("//button[@id='submit_search']")).click();
-		boolean searchedProdDisplayed = driver.findElement(By.xpath("//h2[text()='Searched Products']")).isDisplayed();
+		obj.searchProduct("shirt");
+		obj.searchButton();
+		WebElement searchProductText = obj.searchedProductText();
+		boolean searchedProdDisplayed = searchProductText.isDisplayed();
 		softAssertion.assertEquals(searchedProdDisplayed, true);
-		By productLocator = By.className("single-products"); // Locator for each product
-		List<WebElement> productList = driver.findElements(productLocator);
+		List<WebElement> productList = obj.eachSearchProduct(); // Locates for each product
 		// Check if any products are found and visible
 		Assert.assertTrue(!productList.isEmpty(), "No products found for the search query: " + searchQuery);
 		// Iterate through the list of products to check visibility

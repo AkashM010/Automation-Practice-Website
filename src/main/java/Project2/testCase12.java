@@ -18,18 +18,20 @@ import org.testng.asserts.SoftAssert;
 public class testCase12 {
 	static WebDriver driver;
 	static SoftAssert softAssertion = new SoftAssert();
-	static boolean size = false;
+	static pageObject obj;
+	static boolean size;
 
 	@BeforeTest
 	public static void setUp() {
-		data.setup();
-		driver = data.getDriver();
+		pageObject.setup();
+		driver = pageObject.getDriver();
+		obj = new pageObject(driver);
 		driver.manage().window().maximize();
 	}
 
 	@AfterTest
 	public static void teardown() {
-		data.close();
+		pageObject.close();
 	}
 
 	@Test(priority = 1)
@@ -40,45 +42,52 @@ public class testCase12 {
 
 	@Test
 	public static void products() {
-		driver.findElement(By.xpath("//a[@href='/products']")).click();
-		List <WebElement> overlayElements = driver.findElements(By.cssSelector("div.productinfo.text-center"));
-		WebElement first = overlayElements.get(0);
+		obj.productsButton();
+		pageObject.implicitSync();
+//		WebElement first = obj.overlayElements.get(0);
+		List<WebElement> list = obj.producthover();
+		
+		WebElement first = list.get(0);
 		Actions actions = new Actions(driver);
 		actions.moveToElement(first).perform();
-		WebElement addToCartBtn = first.findElement(By.cssSelector("a.btn.btn-default.add-to-cart"));
+		WebElement addToCartBtn = obj.addtoCart();
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", addToCartBtn);
 		addToCartBtn.click();
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-		WebElement cont = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[text()='Continue Shopping']")));
+		WebElement cont = wait
+				.until(ExpectedConditions.elementToBeClickable(obj.continueShoppng()));
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cont);
 		cont.click();
-		WebElement second = overlayElements.get(1);
+		
+//		WebElement second = obj.overlayElements.get(1);
+		WebElement second = list.get(1);
 		actions.moveToElement(second).perform();
-		WebElement addToCartBtn2 = second.findElement(By.cssSelector("a.btn.btn-default.add-to-cart"));
+		WebElement addToCartBtn2 = obj.addtoCart();
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", addToCartBtn2);
 		addToCartBtn2.click();
-		WebElement cont2 = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[text()='Continue Shopping']")));
+		WebElement cont2 = wait
+				.until(ExpectedConditions.elementToBeClickable(obj.continueShoppng()));
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cont2);
 		cont2.click();
-		driver.findElement(By.xpath("//a[contains(text(),' Cart')]")).click();
-		WebElement table = driver.findElement(By.tagName("tbody"));
-		List <WebElement> rows = table.findElements(By.tagName("tr"));
-		if(rows.size()==2) {
+		obj.cartButton();
+//		WebElement table = driver.findElement(By.tagName("tbody"));
+//		List<WebElement> rows = table.findElements(By.tagName("tr"));
+		if (obj.tableSize() == 2) {
 			size = true;
 		}
 		softAssertion.assertEquals(size, true);
-		WebElement prodRow1 = driver.findElement(By.id("product-1"));
-		WebElement prod1Price = prodRow1.findElement(By.cssSelector("td.cart_price p"));
-		WebElement prod1Quantity = prodRow1.findElement(By.cssSelector("td.cart_quantity button"));
-		WebElement prodRow2 = driver.findElement(By.id("product-2"));
-		WebElement prod2Price = prodRow2.findElement(By.cssSelector("td.cart_price p"));
-		WebElement prod2Quantity = prodRow2.findElement(By.cssSelector("td.cart_quantity button"));
+		WebElement prodRow1 = obj.getProductRowId("product-1");
+		WebElement prod1Price = obj.getProductPrice(prodRow1);
+		WebElement prod1Quantity = obj.getProductQty(prodRow1);
+		
+		WebElement prodRow2 = obj.getProductRowId("product-2");
+		WebElement prod2Price = obj.getProductPrice(prodRow2);
+		WebElement prod2Quantity = obj.getProductQty(prodRow2);
+		
 		softAssertion.assertEquals(prod1Quantity.getText(), "1", "Qty check Failed");
 		softAssertion.assertEquals(prod1Price.getText(), "Rs. 500", "Price check Failed");
-		softAssertion.assertEquals(prod2Quantity.getText(),"1", "Qty check Failed");
+		softAssertion.assertEquals(prod2Quantity.getText(), "1", "Qty check Failed");
 		softAssertion.assertEquals(prod2Price.getText(), "Rs. 400", "Price check Failed");
-		
+
 	}
-}				
-
-
+}

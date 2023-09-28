@@ -12,32 +12,33 @@ import org.testng.asserts.SoftAssert;
 public class testCase19 {
 	static WebDriver driver;
 	static SoftAssert softAssertion = new SoftAssert();
-	static boolean size = false;
+	static pageObject obj;
 
 	@BeforeTest
 	public static void setUp() {
-		data.setup();
-		driver = data.getDriver();
+		pageObject.setup();
+		driver = pageObject.getDriver();
+		obj = new pageObject(driver);
 		driver.manage().window().maximize();
 	}
 
 	@AfterTest
 	public static void teardown() {
-		data.close();
+		pageObject.close();
 	}
 
 	@Test
 	public static void products() {
-		driver.findElement(By.xpath("//a[@href='/products']")).click();
-		boolean brandDisplayed = driver.findElement(By.xpath("//h2[contains(text(),'Brands')]")).isDisplayed();
+		obj.getElement(By.xpath("//a[@href='/products']")).click();
+		boolean brandDisplayed = obj.getElement(By.xpath("//h2[contains(text(),'Brands')]")).isDisplayed();
 		softAssertion.assertEquals(brandDisplayed, true);
-		WebElement polo = driver.findElement(By.xpath("//a[contains(@href,'Polo')]"));
+		WebElement polo = obj.getElement(By.xpath("//a[contains(@href,'Polo')]"));
 		((JavascriptExecutor) driver).executeScript("arguments[0].click();", polo);
 		String url = driver.getCurrentUrl();
 		String expectedUrl = "https://automationexercise.com/brand_products/Polo";
 		softAssertion.assertEquals(url, expectedUrl);
-		data.explicitSync(By.xpath("//h2[text()='Brand - Polo Products']"));
-		boolean poloProdDisplayed = driver.findElement(By.xpath("//h2[text()='Brand - Polo Products']")).isDisplayed();
+		pageObject.explicitSync(By.xpath("//h2[text()='Brand - Polo Products']"));
+		boolean poloProdDisplayed = obj.getElement(By.xpath("//h2[text()='Brand - Polo Products']")).isDisplayed();
 		softAssertion.assertEquals(poloProdDisplayed, true);
 	}
 }

@@ -16,18 +16,20 @@ import org.testng.asserts.SoftAssert;
 public class testCase13 {
 	static WebDriver driver;
 	static SoftAssert softAssertion = new SoftAssert();
+	static pageObject obj;
 	static boolean size = false;
 
 	@BeforeTest
 	public static void setUp() {
-		data.setup();
-		driver = data.getDriver();
+		pageObject.setup();
+		driver = pageObject.getDriver();
+		obj = new pageObject(driver);
 		driver.manage().window().maximize();
 	}
 
 	@AfterTest
 	public static void teardown() {
-		data.close();
+		pageObject.close();
 	}
 
 	@Test(priority = 1)
@@ -52,8 +54,8 @@ public class testCase13 {
 				.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[text()='Continue Shopping']")));
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cont);
 		cont.click();
-		driver.findElement(By.xpath("//a[contains(text(),' Cart')]")).click();
-		data.implicitSync();
+		obj.cartButton();
+		pageObject.implicitSync();
 		WebElement body = driver.findElement(By.tagName("tbody"));
 		WebElement row = body.findElement(By.tagName("tr"));
 		String qty = row.findElement(By.cssSelector("td.cart_quantity button.disabled")).getText();

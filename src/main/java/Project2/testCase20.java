@@ -21,22 +21,25 @@ public class testCase20 {
 	static SoftAssert softAssertion = new SoftAssert();
 	static String searchQuery = "shirt";
 	static boolean flag;
+	static pageObject obj;
 
 	@BeforeTest
 	public static void setUp() {
-		data.setup();
-		driver = data.getDriver();
+		pageObject.setup();
+		driver = pageObject.getDriver();
+		obj = new pageObject(driver);
 		driver.manage().window().maximize();
 	}
 
 	@AfterTest
 	public static void teardown() {
-		data.close();
+		pageObject.close();
 	}
 
 	@Test (priority = 1)
 	public static void products() {
-		driver.findElement(By.xpath("//a[@href='/products']")).click();
+		WebElement product = obj.getElement(By.xpath("//a[@href='/products']"));
+		product.click();
 		boolean allProdDisplayed = driver.findElement(By.xpath("//h2[text()='All Products']")).isDisplayed();
 		softAssertion.assertEquals(allProdDisplayed, true);
 		driver.findElement(By.name("search")).sendKeys("shirt");
@@ -48,8 +51,8 @@ public class testCase20 {
 		// Verify all the products related to search are visible
 		Assert.assertTrue(!productList.isEmpty(), "No products found for the search query: " + searchQuery);
 		// Iterate through the list of products to check visibility
-		for (WebElement product : productList) {
-			Assert.assertTrue(product.isDisplayed(), "Product is not visible: " + product.getText());
+		for (WebElement i : productList) {
+			Assert.assertTrue(i.isDisplayed(), "Product is not visible: " + i.getText());
 		}
 	}
 	
@@ -74,7 +77,7 @@ public class testCase20 {
 	@Test (priority = 3)
 	public static void cart() {
 		driver.findElement(By.xpath("//a[contains(text(),' Cart')]")).click();
-		data.implicitSync();
+		pageObject.implicitSync();
 		WebElement table1 = driver.findElement(By.tagName("tbody"));
 		List <WebElement> rows1 = table1.findElements(By.tagName("tr"));
 		int size1 = rows1.size();
@@ -87,7 +90,7 @@ public class testCase20 {
 		driver.findElement(By.name("password")).sendKeys("Qwerty@123");
 		driver.findElement(By.xpath("//button[text()='Login']")).click();
 		driver.findElement(By.xpath("//a[contains(text(),' Cart')]")).click();
-		data.implicitSync();
+		pageObject.implicitSync();
 		WebElement table2 = driver.findElement(By.tagName("tbody"));
 		List <WebElement> rows2 = table2.findElements(By.tagName("tr"));
 		int size2 = rows2.size();

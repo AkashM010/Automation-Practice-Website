@@ -24,13 +24,13 @@ public class testCase23 {
 	
 	@BeforeTest
 	public static void setUp() {
-		data.setup();
-		driver = data.getDriver();
+		pageObject.setup();
+		driver = pageObject.getDriver();
 	}
 	
 	@AfterTest
 	public static void teardown() {
-		data.close();
+		pageObject.close();
 	}
 	
 	@Test (priority=1)
@@ -54,7 +54,7 @@ public class testCase23 {
 	
 	@Test (priority=4)
 	public static void accountntInfo() {
-		data.implicitSync();
+		pageObject.implicitSync();
 		driver.findElement(By.xpath("//input[@value='Mr']")).click();
 		driver.findElement(By.xpath("//input[@id='password']")).sendKeys("random@13");
 		WebElement day = driver.findElement(By.xpath("//select[@id='days']"));
@@ -89,7 +89,7 @@ public class testCase23 {
 	
 	@Test (priority=6)
 	public static void loggedInAsUsername() {
-		data.implicitSync();
+		pageObject.implicitSync();
 //		driver.findElement(By.xpath("//li/a[contains(text(), 'Logged in as')]"));
 		String value = driver.findElement(By.xpath("//li/a/b")).getText();
 		softAssertion.assertEquals(value, "Random"); 	//checks username value
@@ -110,12 +110,12 @@ public class testCase23 {
 		((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", cont);
 		cont.click();
 		driver.findElement(By.xpath("//a[contains(text(),' Cart')]")).click();
-		data.implicitSync();
+		pageObject.implicitSync();
 		String url = driver.getCurrentUrl();
 		String expectedUrl = "https://automationexercise.com/view_cart";
 		softAssertion.assertEquals(url, expectedUrl);
 		driver.findElement(By.xpath("//a[text()='Proceed To Checkout']")).click();
-		data.implicitSync();
+		pageObject.implicitSync();
 		WebElement addressDetails = driver.findElement(By.cssSelector("li.address_city.address_state_name.address_postcode"));
 		addressDetails.getText();
 		String enteredAddress = "Kolkata West Bengal 123456";
